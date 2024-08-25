@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:             # Service name for your application
+    container_name: url-shortener
+    build: .
+    ports:
+      - "9001:9001"
+    environment:
+      - REDIS_HOST=redis   # Reference the Redis service by its name
+      - REDIS_PORT=6379
+    networks:
+      - my_network
+
+  redis:           # Service name for Redis
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    networks:
+      - my_network
+    volumes:
+      - redis-vol:/data  # Persist data in a named volume
+
+networks:
+  my_network:
+    external: true
+
+volumes:
+  redis-vol:
+    external: true  # Ensure the volume is created if it doesn't exist

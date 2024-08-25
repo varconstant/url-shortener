@@ -2,8 +2,10 @@ package store
 
 import (
 	"context"
+	"fmt"
 	"github.com/redis/go-redis/v9"
 	"log"
+	"os"
 	"time"
 )
 
@@ -19,9 +21,19 @@ type Redis struct {
 }
 
 func NewRedis(ctx context.Context) *Redis {
+	redisHost := os.Getenv("REDIS_HOST")
+	redisPort := os.Getenv("REDIS_PORT")
+
+	// Fallback to default if the env variable is not set
+	if redisHost == "" {
+		redisHost = "localhost"
+	}
+	if redisPort == "" {
+		redisPort = "6379"
+	}
 	return &Redis{
 		redisClient: redis.NewClient(&redis.Options{
-			Addr: "localhost:6379",
+			Addr: fmt.Sprintf("%s:%s", redisHost, redisPort),
 			DB:   0,
 		}),
 		ctx: ctx,
